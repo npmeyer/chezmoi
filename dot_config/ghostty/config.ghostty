@@ -1,0 +1,29 @@
+command = zsh
+shell-integration = zsh
+shell-integration-features = no-cursor,sudo,title
+
+window-height = 40
+window-width = 120
+window-padding-balance = true
+window-padding-x = 5
+window-padding-y = 5
+window-save-state = always
+unfocused-split-opacity = 0.25
+background-opacity = 0.95
+
+background-blur-radius = 15
+macos-titlebar-style = transparent
+
+cursor-style = block
+cursor-style-blink = true
+cursor-click-to-move = false
+
+font-family = Fira Code Retina
+font-size = 16
+
+mouse-hide-while-typing = true
+
+theme = One Half Dark
+bold-is-bright = true
+
+keybind = shift+enter=text:\x1b\r

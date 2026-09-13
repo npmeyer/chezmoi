@@ -1,3 +1,5 @@
 {{- if eq .chezmoi.os "darwin" -}}
 #!/bin/bash
+defaults write com.apple.Terminal "Default Window Settings" -string "OneHalfDark"
+defaults write com.apple.Terminal "Startup Window Settings" -string "OneHalfDark"
 {{ end -}}
