@@ -1,0 +1,8 @@
+# =============================================================================
+# PROMPT
+# Pure is a minimal async prompt. Its directory must be on fpath before
+# promptinit is called.
+# =============================================================================
+fpath+=($HOME/.zsh/pure)
+autoload -Uz promptinit; promptinit
+prompt pure
