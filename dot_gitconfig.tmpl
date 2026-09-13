@@ -1,0 +1,20 @@
+[alias]
+        xl = log --oneline --graph --color --all --decorate
+
+[user]
+        name = Nicholas Meyer
+        email = npmeyer@gmail.com
+
+[init]
+        defaultBranch = main
+
+[pull]
+        rebase = true
+
+[credential "https://github.com"]
+        helper =
+        helper = !gh auth git-credential
+
+[credential "https://gist.github.com"]
+        helper =
+        helper = !gh auth git-credential
