@@ -1,7 +1,7 @@
 {{- if eq .chezmoi.os "darwin" -}}
 #!/bin/bash
 
-brew bundle --file=/dev/stdin <<EOF
+/opt/homebrew/bin/brew bundle --file=/dev/stdin <<EOF
 brew "bash"
 brew "bat"
 brew "chezmoi"
