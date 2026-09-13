@@ -1,0 +1,18 @@
+# =============================================================================
+# PATH
+# Extend PATH with user-local binaries. Done in the login shell so the value
+# is inherited by all child processes for the session.
+# =============================================================================
+[[ -d "$HOME/.local/bin" ]] && path=("$HOME/.local/bin" $path)
+
+# =============================================================================
+# HOMEBREW
+# Initialize Homebrew for the session. `brew shellenv` sets PATH, MANPATH,
+# INFOPATH, HOMEBREW_PREFIX, HOMEBREW_CELLAR, and HOMEBREW_REPOSITORY.
+# =============================================================================
+{{- if eq .chezmoi.os "darwin" }}
+eval "$(/opt/homebrew/bin/brew shellenv)"
+{{ end -}}
+{{- if eq .chezmoi.os "linux" }}
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+{{ end -}}

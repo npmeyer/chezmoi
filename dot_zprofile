@@ -1,6 +1,0 @@
-path+=('/Users/npmeyer/bin')
-export PATH
-
-eval "$(/opt/homebrew/bin/brew shellenv zsh)"
-
-export EDITOR="code --wait"
