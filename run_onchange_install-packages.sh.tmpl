@@ -1,0 +1,26 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+
+brew bundle --file=/dev/stdin <<EOF
+brew "bash"
+brew "bat"
+brew "chezmoi"
+brew "ffmpeg"
+brew "gh"
+brew "git"
+brew "go"
+brew "mosh"
+brew "python"
+brew "tmux"
+brew "wakeonlan"
+brew "zsh"
+cask "1password"
+cask "1password-cli"
+cask "claude"
+cask "claude-code"
+cask "font-fira-code"
+cask "font-fira-code-nerd-font"
+cask "ghostty"
+cask "visual-studio-code"
+EOF
+{{ end -}}
