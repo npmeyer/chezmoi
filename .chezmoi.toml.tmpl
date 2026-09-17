@@ -1,3 +1,10 @@
+[data]
+isVM = {{ if eq .chezmoi.os "darwin" -}}
+  {{ eq (output "sh" "-c" "sysctl -n kern.hv_vmm_present 2>/dev/null || echo 0" | trim) "1" }}
+{{- else -}}
+  false
+{{- end }}
+
 [diff]
 command = "code"
 args = ["--wait", "--diff"]
