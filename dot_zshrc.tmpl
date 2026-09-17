@@ -7,6 +7,102 @@ autoload -Uz promptinit; promptinit
 prompt pure
 
 # =============================================================================
+# HISTORY
+# HISTSIZE controls how many lines are kept in memory for the current session.
+# SAVEHIST is larger so the on-disk file retains far more history than a single
+# session would trim it to. sharehistory writes/reads history across all open
+# shells in real time. histignoredups suppresses consecutive duplicate entries.
+# =============================================================================
+HISTSIZE=10000
+SAVEHIST=100000
+HISTFILE=~/.zsh_history
+setopt histignoredups sharehistory
+
+# =============================================================================
+# KEYBINDINGS
+# Use emacs-style line editing (Ctrl-A/E, Ctrl-R, Ctrl-W, etc.) even when
+# $EDITOR is set to vi.
+# =============================================================================
+bindkey -e
+
+# =============================================================================
+# COMPLETIONS
+# compinit scans fpath and builds the completion system. Rescanning is slow, so
+# the dump file (~/.zcompdump) is reused if it is less than 24 hours old (-C
+# skips the security check and uses the cache as-is). The zstyle rules below
+# control the appearance and matching behavior of completion menus.
+# =============================================================================
+# Add system-installed zsh completions (common on Linux distros).
+[[ -d /usr/share/zsh/site-functions ]] && fpath+=(/usr/share/zsh/site-functions)
+
+autoload -Uz compinit
+if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
+
+# Show a placeholder description when a completion has none of its own.
+zstyle ':completion:*' auto-description 'specify: %d'
+# Completion strategies in order: expand globs, normal completion, error
+# correction, then approximate matching for typos.
+zstyle ':completion:*' completer _expand _complete _correct _approximate
+# Header shown above each group of completions.
+zstyle ':completion:*' format 'Completing %d'
+# Group completions by tag (commands, files, options, etc.) with no label prefix.
+zstyle ':completion:*' group-name ''
+# Prompt shown at the bottom when the list is too long to fit on screen.
+zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
+# Case-insensitive matching, then case-swapped, then partial-word matching on
+# separators like . _ and -.
+zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
+# Show an interactive menu when the list is long; plain listing when it's short.
+zstyle ':completion:*' menu select=long
+# Prompt shown in the menu when scrolling through a long list.
+zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
+# Disable the old compctl completion system in favor of compsys.
+zstyle ':completion:*' use-compctl false
+# Show descriptions alongside each completion candidate.
+zstyle ':completion:*' verbose true
+
+# Color-highlight the PID column in kill completions.
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
+zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
+
+# =============================================================================
+# COLORS
+# Configure colored output for ls and completion menus. macOS uses CLICOLOR;
+# Linux uses GNU ls --color and dircolors to generate LS_COLORS, which is then
+# passed to the completion system so file listings use the same palette.
+# =============================================================================
+{{ if eq .chezmoi.os "darwin" -}}
+export CLICOLOR=1
+{{- else if eq .chezmoi.os "linux" -}}
+alias ls='ls --color=auto'
+eval "$(dircolors -b)"
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+{{- end }}
+
+# =============================================================================
+# ENVIRONMENT
+# =============================================================================
+export EDITOR="vim"
+
+# =============================================================================
+# INTEGRATIONS
+# Each block is guarded so it only activates when the tool is installed.
+# =============================================================================
+
+# --- 1Password CLI ---
+# Load shell completions and the op plugin shim (written by `op plugin init`,
+# which wraps supported CLIs to use 1Password for credential injection).
+# The -r test is needed because ~/.config may itself be a symlink.
+if type op &>/dev/null; then
+  eval "$(op completion zsh)"; compdef _op op
+  [[ -r ~/.config/op/plugins.sh ]] && source ~/.config/op/plugins.sh
+fi
+
+# =============================================================================
 # ALIASES
 # =============================================================================
 [[ -f ~/.aliases ]] && source ~/.aliases
