@@ -8,6 +8,9 @@ defaults write com.apple.dock "show-recents" -bool "false"
 defaults write com.apple.finder "_FXSortFoldersFirst" -bool "true"
 defaults write com.apple.Terminal "Default Window Settings" -string "OneHalfDark"
 defaults write com.apple.Terminal "Startup Window Settings" -string "OneHalfDark"
+defaults write com.apple.TextEdit "NSFixedPitchFont" -string "FiraCode-Retina"
+defaults write com.apple.TextEdit "NSFixedPitchFontSize" -int "16"
+defaults write com.apple.TextEdit "RichText" -int "0"
 
 dockutil --remove "Maps" --no-restart
 dockutil --remove "Photos" --no-restart
