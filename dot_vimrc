@@ -1,0 +1,91 @@
+set nocompatible
+
+" ── Encoding ──────────────────────────────────────────────────────────────────
+" Set early so all subsequent settings interpret strings correctly.
+set encoding=utf-8
+
+" ── Terminal & Colors ─────────────────────────────────────────────────────────
+" Enable true-color (24-bit) support. Vim can't auto-detect the required escape
+" sequences inside tmux, so set them explicitly here.
+if exists('+termguicolors')
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors
+endif
+
+syntax enable
+set background=dark
+colorscheme onehalfdark
+hi Normal guibg=NONE ctermbg=NONE  " transparent background
+
+" ── Status Bar ────────────────────────────────────────────────────────────────
+" laststatus=2 always shows the status line, which is required for vim-airline
+" to display (otherwise it only appears when splits are open).
+set laststatus=2
+let g:airline_theme='onehalfdark'
+
+" ── UI ────────────────────────────────────────────────────────────────────────
+set number      " show line numbers
+set cursorline  " highlight the current line
+
+" Enhanced command-line tab completion: show a menu of all matches above the
+" command line. wildmode: complete to longest common prefix on first Tab, then
+" show the full list on second Tab (similar to shell completion behavior).
+set wildmenu
+set wildmode=longest,list
+
+" ── Editing ───────────────────────────────────────────────────────────────────
+filetype plugin indent on
+
+" 2-space soft tabs globally.
+set shiftwidth=2 softtabstop=2 tabstop=2 expandtab
+
+" Allow switching away from a modified buffer without saving first. The buffer
+" stays loaded in memory and unsaved changes are preserved until you return.
+" Without this, Vim blocks navigation any time a buffer has unsaved changes.
+set hidden
+
+" Auto-save before build/test commands (:make, :next, vim-go run/test/build).
+" Complements 'hidden': hidden handles buffer switching, autowrite handles
+" build workflows.
+set autowrite
+
+" ── Search ────────────────────────────────────────────────────────────────────
+set incsearch  " show matches incrementally as you type
+set hlsearch   " highlight all matches after search
+
+" ── Quickfix Navigation ───────────────────────────────────────────────────────
+" Jump through the quickfix list (build errors, grep results, etc.).
+" Note: <C-m> cannot be used here — it sends the same keycode as Enter.
+nnoremap <C-n> :cnext<CR>
+nnoremap <C-p> :cprevious<CR>
+nnoremap <leader>a :cclose<CR>
+
+" ── Go (vim-go) ───────────────────────────────────────────────────────────────
+" <leader>b builds the file, or runs tests if it's a _test.go file.
+function! s:build_go_files()
+  let l:file = expand('%')
+  if l:file =~# '^\f\+_test\.go$'
+    call go#test#Test(0, 1)
+  elseif l:file =~# '^\f\+\.go$'
+    call go#cmd#Build(0)
+  endif
+endfunction
+
+" Uses nmap (not nnoremap) because <Plug> mappings require recursive lookup.
+" augroup prevents duplicate mappings if vimrc is re-sourced.
+augroup vimgo
+  autocmd!
+  autocmd FileType go nmap <leader>r <Plug>(go-run)
+  autocmd FileType go nmap <leader>t <Plug>(go-test)
+  autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
+  autocmd FileType go nmap <leader>c <Plug>(go-coverage-toggle)
+augroup END
+
+" ── File Explorer (netrw) ─────────────────────────────────────────────────────
+" Tree-style sidebar. Open/close with :Lexplore.
+let g:netrw_banner = 0      " hide the banner
+let g:netrw_liststyle = 3   " tree view
+let g:netrw_browse_split = 4  " open files in the previous window
+let g:netrw_altv = 1        " split to the right
+let g:netrw_winsize = 25    " 25% width
